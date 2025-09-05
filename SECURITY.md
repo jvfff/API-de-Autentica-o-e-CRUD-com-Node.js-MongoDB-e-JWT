@@ -340,7 +340,7 @@ curl -X POST http://localhost:3000/todos \
 Se encontrar uma vulnerabilidade de segurança:
 
 1. **NÃO** crie uma issue pública
-2. Envie email para: security@yourdomain.com
+2. Envie email para: contato.joaovitorfff@gmail.com
 3. Inclua:
    - Descrição da vulnerabilidade
    - Passos para reproduzir
