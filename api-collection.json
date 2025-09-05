@@ -1,0 +1,432 @@
+{
+  "info": {
+    "name": "API Auth CRUD JWT",
+    "description": "Collection para testar a API de Autenticação e CRUD com JWT",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken", 
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "todoId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.test('User registered successfully', function () {",
+                  "        pm.expect(response.message).to.include('sucesso');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.test('Login successful', function () {",
+                  "        pm.expect(response.message).to.include('sucesso');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@email.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.test('Tokens refreshed successfully', function () {",
+                  "        pm.expect(response.message).to.include('renovados');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 User",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "✅ Todos",
+      "item": [
+        {
+          "name": "Create Todo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('todoId', response.todo._id);",
+                  "    pm.test('Todo created successfully', function () {",
+                  "        pm.expect(response.message).to.include('criado');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Minha primeira tarefa\",\n  \"done\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/todos",
+              "host": ["{{baseUrl}}"],
+              "path": ["todos"]
+            }
+          }
+        },
+        {
+          "name": "Get All Todos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/todos?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["todos"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "done",
+                  "value": "false",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Todo by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/todos/{{todoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["todos", "{{todoId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Todo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Tarefa atualizada\",\n  \"done\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/todos/{{todoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["todos", "{{todoId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Todo",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/todos/{{todoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["todos", "{{todoId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 Test Cases",
+      "item": [
+        {
+          "name": "Test Invalid Email Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"invalid-email\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Test Weak Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@email.com\",\n  \"password\": \"123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Test Access Protected Route Without Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["me"]
+            }
+          }
+        },
+        {
+          "name": "Test Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid_token_here"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["me"]
+            }
+          }
+        },
+        {
+          "name": "Test Create Todo Without Title",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"done\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/todos",
+              "host": ["{{baseUrl}}"],
+              "path": ["todos"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
